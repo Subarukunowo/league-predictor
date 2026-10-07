@@ -36,6 +36,75 @@ The system is built with a hybrid architecture combining a web framework with a 
    - `fix_corrupted_logos.py`, `check_logos.php`: Data integrity utilities for visual assets.
    - `generate_data.py`: Pre-processing for statistical models.
 
+## System Use Cases
+
+The application interactions are modeled in the following Use Case diagram:
+
+```mermaid
+flowchart LR
+    %% Actors
+    Pengunjung(["👤 Pengunjung"])
+    Admin(["👤 Admin"])
+    External(["🌐 football-data.co.uk"])
+
+    %% Use Cases
+    subgraph System ["League Prediction AI System"]
+        direction TB
+        UC1(["Pilih Liga"])
+        UC2(["Pilih Tim Home & Away"])
+        UC3(["Lihat Hasil Prediksi"])
+        UC4(["Hitung xG (Poisson)"])
+        UC5(["Hitung Attack & Defense Strength"])
+        UC6(["Unduh Dataset CSV"])
+        
+        UC7(["Login"])
+        UC8(["Kelola Logo Tim"])
+        UC9(["Validasi Logo"])
+        UC10(["Perbarui Dataset"])
+    end
+
+    %% Relationships for Pengunjung
+    Pengunjung --- UC1
+    Pengunjung --- UC2
+    Pengunjung --- UC3
+
+    %% Includes for Pengunjung flow
+    UC3 -. "<<include>>" .-> UC4
+    UC4 -. "<<include>>" .-> UC5
+    UC5 -. "<<include>>" .-> UC6
+
+    %% Relationships for Admin
+    Admin --- UC7
+    Admin --- UC8
+    Admin --- UC10
+
+    %% Includes for Admin flow
+    UC8 -. "<<include>>" .-> UC9
+    UC10 -. "<<include>>" .-> UC6
+
+    %% External System Relationship
+    UC6 --- External
+    
+    %% Styling
+    classDef actor fill:#fff,stroke:#333,stroke-width:2px;
+    classDef usecase fill:#fff5e6,stroke:#8b0000,stroke-width:2px,border-radius:20px;
+    classDef system fill:#fbfbe6,stroke:#808000,stroke-width:2px;
+    
+    class Pengunjung,Admin,External actor;
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10 usecase;
+    class System system;
+```
+
+### Actor Descriptions
+- **Pengunjung (Visitor)**: Public users who access the system to view league statistics and match predictions.
+- **Admin**: System administrators responsible for maintaining visual assets (team logos) and triggering manual dataset updates.
+- **football-data.co.uk**: The third-party external system providing the raw historical match datasets in CSV format.
+
+### Key Use Cases
+- **Lihat Hasil Prediksi (View Prediction)**: When a visitor requests a prediction, the system automatically triggers a chain of dependencies (`<<include>>`): calculating Expected Goals (xG), computing team strengths, and fetching the dataset.
+- **Kelola Logo Tim (Manage Team Logos)**: Admins can manage team assets, which automatically includes a validation step to ensure no corrupted images are displayed.
+- **Perbarui Dataset (Update Dataset)**: Admins can manually trigger a data refresh, which communicates with the external API to download the latest CSV.
+
 ## How the AI Prediction Works (Poisson Distribution)
 
 The model predicts the number of goals each team is likely to score based on their historical performance.
