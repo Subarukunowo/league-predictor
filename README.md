@@ -50,7 +50,7 @@ The model predicts the number of goals each team is likely to score based on the
    - Applies the Poisson formula: `P(x; μ) = (e^(-μ) * μ^x) / x!` to find the exact probability of scoring `x` goals.
    - Simulates thousands of scoreline permutations (e.g., 0-0 up to 5-5) to calculate the aggregate probability of a Home Win, Draw, or Away Win.
 
-## Software Engineering Highlights
+## Software Engineering Use Cases
 
 This project demonstrates several core software engineering practices:
 
